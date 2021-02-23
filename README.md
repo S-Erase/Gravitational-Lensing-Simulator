@@ -6,6 +6,7 @@
 
 ## Introduction
 This application was made to visualize the bending of light around a singularity.
+![screenshot](https://i.imgur.com/QHWqtmE.png)
 
 ## Controls
 
