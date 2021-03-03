@@ -9,7 +9,7 @@ This is an interactive application which allows you to
 move freely around a gravitational singularity in an 
 environment of your choosing and experience the gravitation 
 lensing caused by it.
-![screenshot](https://i.imgur.com/QHWqtmE.png = 250x)
+![screenshot](https://i.imgur.com/QHWqtmE.png =250x)
 
 ### No Gravity
 The "No Gravity" mode does not bend light in any way, so a reflective sphere of schwarzschild radius is rendered so that the camera's bearings are known.
