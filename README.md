@@ -9,6 +9,8 @@ This is an interactive application which allows you to
 move freely around a gravitational singularity in an 
 environment of your choosing and experience the gravitation 
 lensing caused by it.
+
+
 <img src="https://i.imgur.com/QHWqtmE.png" alt="drawing" width="600"/>
 
 ### No Gravity
