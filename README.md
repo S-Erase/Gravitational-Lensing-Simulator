@@ -5,7 +5,10 @@
 * [Controls](controls)
 
 ## Introduction
-This application was made to visualize the bending of light around a singularity.
+This is an interactive application which allows you to 
+move freely around a gravitational singularity in an 
+environment of your choosing and experience the gravitation 
+lensing caused by it.
 ![screenshot](https://i.imgur.com/QHWqtmE.png)
 
 ## Controls
