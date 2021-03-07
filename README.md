@@ -10,8 +10,7 @@ move freely around a gravitational singularity in an
 environment of your choosing and experience the gravitation 
 lensing caused by it.
 
-
-<img src="https://i.imgur.com/QHWqtmE.png" alt="drawing" width="600"/>
+<img src="https://i.imgur.com/iwsijgQ.png" alt="drawing" width="300"/><img src="https://i.imgur.com/dSboaqn.png" alt="drawing" width="300"/><img src="https://i.imgur.com/NDYE6cK.png" alt="drawing" width="300"/>
 
 ### No Gravity
 The "No Gravity" mode does not bend light in any way, so a reflective sphere of schwarzschild radius is rendered so that the camera's bearings are known.
