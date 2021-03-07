@@ -2,6 +2,7 @@
 
 ## Table of Contents
 * [Introduction](introduction)
+* [Technologies](technologies)
 * [Settings](settings)
 * [Controls](controls)
 
@@ -10,6 +11,9 @@ This is an interactive application which allows you to
 move freely around a gravitational singularity in an 
 environment of your choosing and experience the gravitation 
 lensing caused by it.
+
+## Technologies
+This application uses wxWidgets to handle the user interface, and OpenGL to render the environment.
 
 ## Settings
 
