@@ -37,7 +37,7 @@ cOpenGLShader::cOpenGLShader(const std::string& filepath)
 	//Reads shader code
 	std::string srccode;
 	std::ifstream in(filepath, std::ios::in | std::ios::binary);
-	SE_ASSERT(in, wxString::Format("'%s' could not be read!", filepath));
+	SE_ASSERT(in, static_cast<const char*>(wxString::Format("'%s' could not be read!", filepath)));
 	in.seekg(0, std::ios::end);
 	srccode.resize(in.tellg());
 	in.seekg(0, std::ios::beg);
@@ -220,41 +220,6 @@ void cOpenGLVAO::DrawArrays(GLenum mode) {
 	SE_ASSERT(m_vboRef, "Vertex Array Object needs a Vertex Buffer Object!");
 	size_t DrawCount = m_vboRef->GetSize() / m_Stride;
 	glDrawArrays(mode, 0, DrawCount);
-}
-
-cOpenGLTexture::cOpenGLTexture(const char* filepath)
-{
-	unsigned char* data = stbi_load(filepath, &m_Width, &m_Height, &m_Channels, 0);
-
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	GLint internalformat = 0;
-	GLint format = 0;
-	switch (m_Channels) {
-	case 4:
-		internalformat = GL_RGBA8;
-		format = GL_RGBA;
-		break;
-	case 3:
-		internalformat = GL_RGB8;
-		format = GL_RGB;
-		break;
-	case 2:
-		internalformat = GL_RG8;
-		format = GL_RG;
-		break;
-	case 1:
-		internalformat = GL_R8;
-		format = GL_RED;
-		break;
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, internalformat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
-	stbi_image_free(data);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 struct stbi_imagedata {
@@ -456,4 +421,15 @@ void cOpenGLCubemap::UseNet(const char* filepath)
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8, m_Size, m_Size, 0, format, GL_UNSIGNED_BYTE, outdata);
 	}
 	free(outdata);
+}
+
+cOpenGLFrameBuffer::cOpenGLFrameBuffer()
+{
+	//glGenFramebuffers(1, &m_FrameBufferID);
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
+}
+
+cOpenGLFrameBuffer::~cOpenGLFrameBuffer()
+{
+	//glDeleteFramebuffers(1, &m_FrameBufferID);
 }

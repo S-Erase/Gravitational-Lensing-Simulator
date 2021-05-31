@@ -23,6 +23,7 @@ layout(location = 0) out vec4 outColor;
 uniform vec3 cam_position;
 uniform samplerCube u_texture;
 uniform float r_s = 3;
+uniform float r_Q2 = 1;
 
 in vec3 v_lightray;
 
@@ -38,7 +39,7 @@ float r2thetadot = length(angmom);
 float r = length(cam_position);
 float r4thetadot2 = dot(angmom,angmom);
 
-float relativisticangmom = (rrdot*rrdot/(r2*r4thetadot2) + (1 - r_s/r)/r2);
+float relativisticangmom = (rrdot*rrdot/(r2*r4thetadot2) + (1 - r_s/r + r_Q2/r2)/r2);
 	
 vec3 finalray(float u, float v)
 {
@@ -47,20 +48,20 @@ vec3 finalray(float u, float v)
 
 vec2 ode(vec2 state)
 {
-	return vec2(state.y, (state.x - 1)*state.x);
+	return vec2(state.y, (-2*r_Q2*state.x*state.x + 1.5*r_s*state.x - 1)*state.x);
 }
 
-float integrate()
+float integrate(float limit)
 {
-	float v0 = 1.5*r_s/r;
-	float w0 = -1.5*r_s*rrdot/(r*r2thetadot);
+	float v0 = 1/r;
+	float w0 = -rrdot/(r*r2thetadot);
 	
 	vec2 curr_state = vec2(v0, w0), prev_state;
 	
 	//Runge Kutta
 	float h = 0.05, angle = 0;
 	vec2 k1, k2, k3, k4;
-	while(curr_state.x > 0 && angle < 8*M_PI)
+	while(curr_state.x > 0 && angle < limit)
 	{
 		k1 = ode(curr_state);
 		k2 = ode(curr_state + k1*h*0.5);
@@ -75,46 +76,59 @@ float integrate()
 	return angle - h*curr_state.x/(curr_state.x-prev_state.x);
 }
 
+float C(float u) //funtcion -(du/d theta)^2
+{
+	return ((r_Q2*u - r_s)*u + 1)*u*u - relativisticangmom;
+}
+
 void main()
 {
 	float angle;
 	
-	float c_max = 4/(27*r_s*r_s) - relativisticangmom;
-	if(r_s == 0)
+	if(32*r_Q2 >= 9*r_s*r_s) //One root
 	{
-		outColor = texture(u_texture, v_lightray);
-	}
-	else if(c_max >= 0)
-	{
-		if(r < 3*r_s/2)
-		{
-			outColor = vec4(0.0, 0.0, 0.0, 1.0);
-		}
-		else if(r > 3*r_s/2)
-		{
-			angle = integrate();
-			outColor = texture(u_texture, finalray(cos(angle),sin(angle)));
-		}
-		else if(rrdot <= 0)
-		{
-			outColor = vec4(0.0, 0.0, 0.0, 1.0);
-		}
-		else
-		{
-			angle = integrate();
-			outColor = texture(u_texture, finalray(cos(angle),sin(angle)));
-		}
+		angle = integrate(8*M_PI);
+		outColor = texture(u_texture, finalray(cos(angle),sin(angle)));
 	}
 	else
 	{
-		if(rrdot <= 0)
+		float u_minus = (3*r_s - sqrt(9*r_s*r_s - 32*r_Q2))/(8*r_Q2);
+		float c_minus = C(u_minus);
+		
+		if(c_minus < 0) //One root
 		{
-			outColor = vec4(0.0, 0.0, 0.0, 1.0);
+			outColor = vec4(0.5, 0.0, 0.0, 1.0); //Not fixed
+			angle = integrate(24*M_PI);
+			outColor = texture(u_texture, finalray(cos(angle),sin(angle)));
+		}
+		else if(c_minus == 0) //Two roots
+		{
+			outColor = vec4(0.5, 0.0, 0.0, 1.0); //Not fixed
 		}
 		else
 		{
-			angle = integrate();
-			outColor = texture(u_texture, finalray(cos(angle),sin(angle)));
+			float c_plus = C((3*r_s + sqrt(9*r_s*r_s - 32*r_Q2))/(8*r_Q2));
+			
+			if(c_plus < 0) //Three roots
+			{
+				if(1 > r*u_minus) // u > u_minus
+				{
+					outColor = vec4(0.0, 0.0, 0.0, 1.0);
+				}
+				else{
+					angle = integrate(8*M_PI);
+					outColor = texture(u_texture, finalray(cos(angle),sin(angle)));
+				}
+			}
+			else if(c_plus == 0) //Two roots
+			{
+				outColor = vec4(0.5, 0.0, 0.0, 1.0); //Not fixed
+			}
+			else //One root
+			{
+				angle = integrate(8*M_PI);
+				outColor = texture(u_texture, finalray(cos(angle),sin(angle)));
+			}
 		}
 	}
 }

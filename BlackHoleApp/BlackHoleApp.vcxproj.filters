@@ -51,4 +51,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\assets\shaders\Cube_Shader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\assets\textures\defaultB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\assets\textures\defaultD.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\assets\textures\defaultF.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\assets\textures\defaultL.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\assets\textures\defaultR.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\assets\textures\defaultU.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

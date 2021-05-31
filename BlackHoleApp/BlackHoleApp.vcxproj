@@ -33,6 +33,17 @@
     <ClCompile Include="src\cMain.cpp" />
     <ClCompile Include="src\cOpenGLObjects.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\assets\shaders\Cube_Shader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\assets\textures\defaultB.png" />
+    <Image Include="src\assets\textures\defaultD.png" />
+    <Image Include="src\assets\textures\defaultF.png" />
+    <Image Include="src\assets\textures\defaultL.png" />
+    <Image Include="src\assets\textures\defaultR.png" />
+    <Image Include="src\assets\textures\defaultU.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

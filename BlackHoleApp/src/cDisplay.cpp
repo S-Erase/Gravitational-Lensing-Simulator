@@ -76,11 +76,15 @@ void cDisplay::Setup()
 	};
 	m_CubeVBO = std::make_shared<cOpenGLStaticVBO>(sizeof(cubevertices), cubevertices);
 	m_CubeIBO = std::make_shared<cOpenGLStaticIBO>(sizeof(cubeindices), cubeindices, GL_UNSIGNED_INT);
-	m_CubeVAO = std::make_shared<cOpenGLVAO>();
+	m_CubeVAO = std::make_unique<cOpenGLVAO>();
 	m_CubeVAO->SetLayout({ {3, GL_FLOAT} });
 	m_CubeVAO->BindVertexBuffer(m_CubeVBO);
-	m_CubeShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader.glsl");
-	m_CubeShader->SetUniformSamplerCube("u_texture", 0);
+
+	m_CubeFlatShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_Flat.glsl");
+	m_CubeNGShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_NG.glsl");
+	m_CubeGRShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_GR2.glsl");
+	m_CubeGRwChargeShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_GRwCharge.glsl");
+
 	m_Cubemap = std::make_shared<cOpenGLCubemap>("src/assets/textures/defaultF.png","src/assets/textures/defaultB.png","src/assets/textures/defaultR.png",
 		"src/assets/textures/defaultL.png","src/assets/textures/defaultU.png","src/assets/textures/defaultD.png");
 	ViewMat = glm::mat4(1.0f);
@@ -99,12 +103,29 @@ void cDisplay::OnPaint(wxPaintEvent& event)
 	ViewMat = glm::rotate(glm::mat4(1.0f), glm::radians(cam_theta[1]), glm::vec3(-1.0f, 0.0f, 0.0f));
 	ViewMat = glm::rotate(ViewMat, glm::radians(cam_theta[0]), glm::vec3(0.0f, 1.0f, 0.0f));
 	PVMMat = ProjMat * ViewMat;
+	switch (cCtrlPanel::GetInstance()->GetGravitySetting()) {
+	case 0:
+		m_CubeShader = m_CubeFlatShader;
+		break;
+	case 1:
+		m_CubeShader = m_CubeNGShader;
+		break;
+	case 2:
+		if(cCtrlPanel::GetInstance()->GetSquaredCharge() == 0)
+			m_CubeShader = m_CubeGRShader;
+		else
+			m_CubeShader = m_CubeGRwChargeShader;
+		break;
+	}
+
 	m_CubeShader->SetUniformMat4("ViewMat", ViewMat);
 	m_CubeShader->SetUniformMat4("PVMMat", PVMMat);
 	m_CubeShader->SetUniformFloat3("cam_position", m_position);
-	m_CubeShader->SetUniformFloat("r_s", cCtrlPanel::GetInstance()->GetSchwarzschildRadius());
-	m_CubeShader->SetUniformInt("gravity_mode", cCtrlPanel::GetInstance()->GetGravitySetting());
 	m_CubeShader->SetUniformSamplerCube("u_texture", 0);
+	m_CubeShader->SetUniformFloat("r_s", cCtrlPanel::GetInstance()->GetSchwarzschildRadius());
+	if (cCtrlPanel::GetInstance()->GetGravitySetting() == 2 && cCtrlPanel::GetInstance()->GetSquaredCharge() != 0) {
+		m_CubeShader->SetUniformFloat("r_Q2", cCtrlPanel::GetInstance()->GetSquaredCharge());
+	}
 	m_Cubemap->Bind();
 	m_CubeVAO->DrawElements(m_CubeIBO, GL_TRIANGLES, m_CubeIBO->GetCount());
 	// and display
@@ -118,7 +139,42 @@ void cDisplay::MoveCamera() {
 	glm::vec3 d_vec = { cos(glm::radians(cam_theta[0])) ,0.0f,sin(glm::radians(cam_theta[0])) };
 	glm::vec2 dir = WASDtovec2(WASDflag);
 	m_position += (d_vec*dir.x + w_vec*dir.y)*0.5f;
-	cCtrlPanel::GetInstance()->display_position->SetLabel(wxString::Format("Camera Position: %.2f, %.2f, %.2f", m_position.x, m_position.y, m_position.z));
+}
+
+void cDisplay::SetCameratoFace(GLenum target)
+{
+	switch (target) {
+	case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+		cam_theta[0] = 90;
+		cam_theta[1] = 0;
+		break;
+	case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+		cam_theta[0] = -90;
+		cam_theta[1] = 0;
+		break;
+	case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+		cam_theta[0] = 180;
+		cam_theta[1] = 90;
+		break;
+	case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+		cam_theta[0] = 180;
+		cam_theta[1] = -90;
+		break;
+	case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+		cam_theta[0] = 180;
+		cam_theta[1] = 0;
+		break;
+	case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
+		cam_theta[0] = 0;
+		cam_theta[1] = 0;
+		break;
+	}
+}
+
+void cDisplay::SetCameratoCenter()
+{
+	cam_theta[0] = 180 / M_PI * atan2(-m_position.x, m_position.z);
+	cam_theta[1] = 180 / M_PI * atan2(-m_position.y, sqrt(m_position.x * m_position.x + m_position.z * m_position.z));
 }
 
 void cDisplay::OnResize(wxSizeEvent& event)
@@ -142,8 +198,6 @@ void cDisplay::OnMouseMove(wxMouseEvent& event)
 		cam_theta[1] = init_cam_theta[1] + mousediff.y;
 		mod(cam_theta[0], 360.0f);
 		clamp(cam_theta[1], -90.0f, 90.0f);
-
-		cCtrlPanel::GetInstance()->display_camera->SetLabel(wxString::Format("Camera Angle: %.2f, %.2f", cam_theta[0], cam_theta[1]));
 	}
 	event.Skip();
 }

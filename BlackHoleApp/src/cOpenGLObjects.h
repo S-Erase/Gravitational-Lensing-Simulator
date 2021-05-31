@@ -159,17 +159,6 @@ private:
 	std::shared_ptr<cOpenGLVBO> m_vboRef;
 };
 
-class cOpenGLTexture {
-public:
-	cOpenGLTexture(const char* filepath);
-	void Bind(sampler2D slot = 0) {
-		glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	}
-private:
-	GLuint m_TextureID = 0;
-	int m_Width = 0, m_Height = 0, m_Channels = 0;
-};
 
 class cOpenGLCubemap {
 public:
@@ -183,4 +172,12 @@ public:
 private:
 	GLuint m_TextureID = 0;
 	int m_Size = 1280;
+};
+
+class cOpenGLFrameBuffer {
+public:
+	cOpenGLFrameBuffer();
+	~cOpenGLFrameBuffer();
+private:
+	GLuint m_FrameBufferID = 0;
 };
