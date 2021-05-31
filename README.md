@@ -42,7 +42,7 @@ The "General Relativity" mode treats light rays as null geodesics in Reissner–
 otherwise flat space. It bends light according to the laws of General Relativity.
 
 #### Reissner–Nordström spacetime
-Reissner–Nordström spacetime is a generalised version of Schwarzchild spacetime which accounts for the electric charge of a black hole. Unlike in classical models of gravity, the electric charge and angular momentum of mass influences gravitational forces.
+Reissner–Nordström spacetime is a generalised version of Schwarzchild spacetime which accounts for the electric charge of a black hole. Unlike in classical models of gravity, the electric charge and angular momentum of mass influences gravitational forces. Increasing the electric charge enough will cause the event horizon to vanish, causing a "naked singularity", currently thought to be impossible in nature.
 
 ## Controls
 
