@@ -38,8 +38,11 @@ outside the event horizon will always escape to infinity regardless of direction
 is not directly visible and you must observe the distortion of light to infer the singularity's location.
 
 #### General Relativity
-The "General Relativity" mode treats light rays as null geodesics in schwarzschild spacetime. The spacetime which models a single black hole inside 
+The "General Relativity" mode treats light rays as null geodesics in Reissner–Nordström spacetime. The spacetime which models a single black hole inside 
 otherwise flat space. It bends light according to the laws of General Relativity.
+
+#### Reissner–Nordström spacetime
+Reissner–Nordström spacetime is a generalised version of Schwarzchild spacetime which accounts for the electric charge of a black hole. Unlike in classical models of gravity, the electric charge and angular momentum of mass influences gravitational forces.
 
 ## Controls
 
