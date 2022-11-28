@@ -12,7 +12,7 @@ This program was built to make that experience interactive. Allowing you to move
 singularity as well as upload skybox nets to decide the environment for yourself.
 
 ## Technologies
-This application uses wxWidgets to handle the user interface, and OpenGL to render the environment.
+This application uses wxWidgets 3.1.4 to handle the user interface, and OpenGL to render the environment.
 
 ## Settings
 
