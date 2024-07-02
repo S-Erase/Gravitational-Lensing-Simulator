@@ -4,7 +4,7 @@
 #include <wx/msgdlg.h> 
 
 enum {R_Face, L_Face, U_Face, D_Face, B_Face, F_Face, Net_Face, 
-	F_Grav, NG_Grav, GR_Grav, 
+	F_Grav, NG_Grav, GR_Grav, Conic_Grav,
 	R_Camera, L_Camera, U_Camera, D_Camera, B_Camera, F_Camera, Cen_Camera};
 
 cCtrlPanel* cCtrlPanel::m_Instance = nullptr;
@@ -36,6 +36,7 @@ cCtrlPanel::cCtrlPanel(wxWindow* parent) : wxPanel(parent)
 	wxStaticBoxSizer* stbox1 = new wxStaticBoxSizer(wxVERTICAL, this, "Gravity");
 	wxBoxSizer* hboxRadius = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* hboxCharge = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* hboxConic = new wxBoxSizer(wxHORIZONTAL);
 
 	hboxRadius->Add(new wxStaticText(this, wxID_ANY, "Schwarzschild radius"));
 	radius_slider = new wxSlider(this, wxID_ANY, 300,0,1000);
@@ -50,12 +51,19 @@ cCtrlPanel::cCtrlPanel(wxWindow* parent) : wxPanel(parent)
 	resetCharge = new wxButton(this, wxID_ANY, "Reset Charge");
 	stbox1->Add(resetCharge);
 
+	hboxConic->Add(new wxStaticText(this, wxID_ANY, "Cone Steepness"));
+	steepness_slider = new wxSlider(this, wxID_ANY, 0, 0, 500);
+	hboxConic->Add(steepness_slider);
+	stbox1->Add(hboxConic);
+
 	flatmode =	new wxRadioButton(this, F_Grav, "No Gravity", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	NGmode =	new wxRadioButton(this, NG_Grav, "Newtonian Gravity");
-	GRmode =	new wxRadioButton(this, GR_Grav, "General Relativity");
+	GRmode = new wxRadioButton(this, GR_Grav, "General Relativity");
+	Conicmode = new wxRadioButton(this, Conic_Grav, "Conic Geometry");
 	stbox1->Add(flatmode);
 	stbox1->Add(NGmode);
 	stbox1->Add(GRmode);
+	stbox1->Add(Conicmode);
 
 	wxStaticBoxSizer* stbox2 = new wxStaticBoxSizer(wxVERTICAL, this, "Camera");
 
@@ -86,9 +94,11 @@ cCtrlPanel::cCtrlPanel(wxWindow* parent) : wxPanel(parent)
 	Bind(wxEVT_BUTTON, &cCtrlPanel::OnLoadNet , this, Net_Face);
 	Bind(wxEVT_SLIDER, &cCtrlPanel::OnRadiusSlider, this, radius_slider->GetId());
 	Bind(wxEVT_SLIDER, &cCtrlPanel::OnChargeSlider, this, charge_slider->GetId());
+	Bind(wxEVT_SLIDER, &cCtrlPanel::OnConeSteepnessSlider, this, steepness_slider->GetId());
 	Bind(wxEVT_RADIOBUTTON, &cCtrlPanel::OnGravitySettings, this, F_Grav);
 	Bind(wxEVT_RADIOBUTTON, &cCtrlPanel::OnGravitySettings, this, NG_Grav);
 	Bind(wxEVT_RADIOBUTTON, &cCtrlPanel::OnGravitySettings, this, GR_Grav);
+	Bind(wxEVT_RADIOBUTTON, &cCtrlPanel::OnGravitySettings, this, Conic_Grav);
 	Bind(wxEVT_BUTTON, &cCtrlPanel::OnResetCharge, this, resetCharge->GetId());
 	Bind(wxEVT_BUTTON, &cCtrlPanel::OnFaceCamera, this, F_Camera);
 	Bind(wxEVT_BUTTON, &cCtrlPanel::OnFaceCamera, this, B_Camera);
@@ -153,13 +163,17 @@ void cCtrlPanel::OnChargeSlider(wxCommandEvent& event) {
 	electric_charge = (float)charge_slider->GetValue() / 100.0f;
 	event.Skip();
 }
+void cCtrlPanel::OnConeSteepnessSlider(wxCommandEvent& event) {
+	conic_steepness = (float)steepness_slider->GetValue() / 100.0f;
+	event.Skip();
+}
 void cCtrlPanel::OnResetCharge(wxCommandEvent& event) {
 	electric_charge = 0.0f;
 	charge_slider->SetValue(0);
 	event.Skip();
 }
 void cCtrlPanel::OnGravitySettings(wxCommandEvent& event) {
-	gravity_mode = event.GetId() - F_Grav;
+	gravity_mode = Gravity_Mode(event.GetId() - F_Grav);
 	event.Skip();
 }
 

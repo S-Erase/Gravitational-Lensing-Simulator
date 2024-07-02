@@ -1,6 +1,8 @@
 #pragma once
 #include "wx/wx.h"
 
+enum class Gravity_Mode {Flat, NG, GR, Cone};
+
 class cCtrlPanel : public wxPanel
 {
 public:
@@ -9,8 +11,9 @@ public:
 	~cCtrlPanel();
 
 	inline float GetSchwarzschildRadius() const { return schwar_radius; }
+	inline float GetConeSteepness() const { return conic_steepness; }
 	inline float GetSquaredCharge() const { return electric_charge*electric_charge; }
-	inline int GetGravitySetting() const { return gravity_mode; }
+	inline Gravity_Mode GetGravitySetting() const { return gravity_mode; }
 
 	wxStaticText* display_size = nullptr;
 	wxStaticText* display_camera = nullptr;
@@ -33,10 +36,14 @@ private:
 	float electric_charge = 0.0f;
 	wxButton* resetCharge = nullptr;
 
+	wxSlider* steepness_slider = nullptr;
+	float conic_steepness = 0.0f;
+
 	wxRadioButton* flatmode = nullptr;
 	wxRadioButton* NGmode = nullptr;
 	wxRadioButton* GRmode = nullptr;
-	int gravity_mode = 0;
+	wxRadioButton* Conicmode = nullptr;
+	Gravity_Mode gravity_mode = Gravity_Mode::Flat;
 
 	wxButton* frontcamctrl = nullptr;
 	wxButton* backcamctrl = nullptr;
@@ -50,6 +57,7 @@ private:
 	void OnLoadNet(wxCommandEvent& event);
 	void OnRadiusSlider(wxCommandEvent& event);
 	void OnChargeSlider(wxCommandEvent& event);
+	void OnConeSteepnessSlider(wxCommandEvent& event);
 	void OnResetCharge(wxCommandEvent& event);
 	void OnGravitySettings(wxCommandEvent& event);
 	void OnFaceCamera(wxCommandEvent& event);

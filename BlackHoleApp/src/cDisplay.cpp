@@ -81,9 +81,11 @@ void cDisplay::Setup()
 	m_CubeVAO->BindVertexBuffer(m_CubeVBO);
 
 	m_CubeFlatShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_Flat.glsl");
+	m_CubeFlatwPhotonSphereShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_FlatwPhotonSphere.glsl");
 	m_CubeNGShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_NG.glsl");
-	m_CubeGRShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_GR2.glsl");
+	m_CubeGRShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_GR.glsl");
 	m_CubeGRwChargeShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_GRwCharge.glsl");
+	m_CubeConeShader = std::make_shared<cOpenGLShader>("src/assets/shaders/Cube_Shader_Cone.glsl");
 
 	m_Cubemap = std::make_shared<cOpenGLCubemap>("src/assets/textures/defaultF.png","src/assets/textures/defaultB.png","src/assets/textures/defaultR.png",
 		"src/assets/textures/defaultL.png","src/assets/textures/defaultU.png","src/assets/textures/defaultD.png");
@@ -104,17 +106,20 @@ void cDisplay::OnPaint(wxPaintEvent& event)
 	ViewMat = glm::rotate(ViewMat, glm::radians(cam_theta[0]), glm::vec3(0.0f, 1.0f, 0.0f));
 	PVMMat = ProjMat * ViewMat;
 	switch (cCtrlPanel::GetInstance()->GetGravitySetting()) {
-	case 0:
-		m_CubeShader = m_CubeFlatShader;
+	case Gravity_Mode::Flat:
+		m_CubeShader = m_CubeFlatwPhotonSphereShader;
 		break;
-	case 1:
+	case Gravity_Mode::NG:
 		m_CubeShader = m_CubeNGShader;
 		break;
-	case 2:
+	case Gravity_Mode::GR:
 		if(cCtrlPanel::GetInstance()->GetSquaredCharge() == 0)
 			m_CubeShader = m_CubeGRShader;
 		else
 			m_CubeShader = m_CubeGRwChargeShader;
+		break;
+	case Gravity_Mode::Cone:
+		m_CubeShader = m_CubeConeShader;
 		break;
 	}
 
@@ -122,8 +127,13 @@ void cDisplay::OnPaint(wxPaintEvent& event)
 	m_CubeShader->SetUniformMat4("PVMMat", PVMMat);
 	m_CubeShader->SetUniformFloat3("cam_position", m_position);
 	m_CubeShader->SetUniformSamplerCube("u_texture", 0);
-	m_CubeShader->SetUniformFloat("r_s", cCtrlPanel::GetInstance()->GetSchwarzschildRadius());
-	if (cCtrlPanel::GetInstance()->GetGravitySetting() == 2 && cCtrlPanel::GetInstance()->GetSquaredCharge() != 0) {
+	if (cCtrlPanel::GetInstance()->GetGravitySetting() != Gravity_Mode::Cone) {
+		m_CubeShader->SetUniformFloat("r_s", cCtrlPanel::GetInstance()->GetSchwarzschildRadius());
+	}
+	else {
+		m_CubeShader->SetUniformFloat("steepness", cCtrlPanel::GetInstance()->GetConeSteepness());
+	}
+	if (cCtrlPanel::GetInstance()->GetGravitySetting() == Gravity_Mode::GR && cCtrlPanel::GetInstance()->GetSquaredCharge() != 0) {
 		m_CubeShader->SetUniformFloat("r_Q2", cCtrlPanel::GetInstance()->GetSquaredCharge());
 	}
 	m_Cubemap->Bind();

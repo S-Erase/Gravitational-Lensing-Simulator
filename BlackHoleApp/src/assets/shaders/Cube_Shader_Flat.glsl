@@ -39,21 +39,24 @@ float r = length(cam_position);
 void main()
 {
 		float dr2_dtheta2 = r2*rrdot*rrdot/r4thetadot2;
-        if(r2 < r_s*r_s){
-            outColor = vec4(0.0, 0.0, 0.0, 1.0);
+        if(r2 < r_s*r_s) //Inside Event Horizon
+		{
+          outColor = vec4(0.0, 0.0, 0.0, 1.0);
 			
 		//	float t = (rrdot-sqrt(rrdot*rrdot-r2*lightspeed2+lightspeed2*r_s*r_s))/lightspeed2;
 		//	vec3 intersect = cam_position - t*v_lightray;
 		//	float inang = acos(dot(v_lightray,intersect)/(sqrt(lightspeed2)*r_s));
-		//	float outang;
 		//	//Refraction
 		//	float ref = 0.95;
-		//	outang = asin(sin(inang)/ref)-inang;
+		//	float outang = asin(sin(inang)/ref)-inang;
         //  outColor = texture(u_texture, rotateray(cos(outang),sin(outang)));
-        }else if(rrdot > 0){
+        }
+		else if(rrdot > 0) //Facing away from Black Hole
+		{
             outColor = texture(u_texture, v_lightray);
         }
-        else if(r2*r2< r_s*r_s*(dr2_dtheta2+r2)){
+        else if(r2*r2< r_s*r_s*(dr2_dtheta2+r2)) //Looking at Event Horizon
+		{
             outColor = vec4(0.0, 0.0, 0.0, 1.0);
 			
 			float t = (rrdot+sqrt(rrdot*rrdot-r2*lightspeed2+lightspeed2*r_s*r_s))/lightspeed2;
@@ -69,7 +72,8 @@ void main()
 			float fresnel = 0.2 + 0.8*pow(1-inang,5);
 			outColor = texture(u_texture, v_lightray-intersect*2*dot(v_lightray,intersect)/(r_s*r_s))*fresnel;
         }
-        else{
+        else //Not Looking at Event Horizon
+		{
             outColor = texture(u_texture, v_lightray);
         }
 }

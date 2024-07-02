@@ -46,9 +46,11 @@ private:
     std::unique_ptr<cOpenGLVAO> m_CubeVAO;
     std::shared_ptr<cOpenGLShader> m_CubeShader;
     std::shared_ptr<cOpenGLShader> m_CubeFlatShader;
+    std::shared_ptr<cOpenGLShader> m_CubeFlatwPhotonSphereShader;
     std::shared_ptr<cOpenGLShader> m_CubeNGShader;
     std::shared_ptr<cOpenGLShader> m_CubeGRShader;
     std::shared_ptr<cOpenGLShader> m_CubeGRwChargeShader;
+    std::shared_ptr<cOpenGLShader> m_CubeConeShader;
     std::shared_ptr<cOpenGLCubemap> m_Cubemap;
 
     std::array<float, 2> init_cam_theta = { 0.0f, 0.0f };
