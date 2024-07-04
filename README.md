@@ -24,20 +24,22 @@ can replaced by a .jpg or .png image of the user's choosing by pressing the resp
 also be replaced at once by loading a custom cube net.
 
 ### Gravity
-<img src="https://i.imgur.com/iwsijgQ.png" alt="drawing" width="300"/><img src="https://i.imgur.com/dSboaqn.png" alt="drawing" width="300"/><img src="https://i.imgur.com/NDYE6cK.png" alt="drawing" width="300"/>
 
 #### No Gravity
+<img src="https://i.imgur.com/iwsijgQ.png" alt="drawing" width="300"/>
 The "No Gravity" mode is the default setting and does not bend light in any way, so a reflective sphere of schwarzschild radius is rendered so 
 that the camera's bearings are known.
 The screen goes black when the camera goes inside this sphere.
 
 #### Newtonian Gravity
+<img src="https://i.imgur.com/dSboaqn.png" alt="drawing" width="300"/>
 The "Newtonian Gravity" mode bends light as if it were an object subject to the classical model of gravity.
 The radius of a black hole's event horizon is the same under Newtonian Gravity as under General Relativity. The difference is that light rays 
 outside the event horizon will always escape to infinity regardless of direction, unlike in General Relativity. This means that the event horizon 
 is not directly visible and you must observe the distortion of light to infer the singularity's location.
 
 #### General Relativity
+<img src="https://i.imgur.com/NDYE6cK.png" alt="drawing" width="300"/>
 The "General Relativity" mode treats light rays as null geodesics in Reissner–Nordström spacetime. The spacetime which models a single black hole inside 
 otherwise flat space. It bends light according to the laws of General Relativity.
 
